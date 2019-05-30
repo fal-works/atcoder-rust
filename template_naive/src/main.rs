@@ -46,6 +46,12 @@ fn parse_lines<T: std::str::FromStr>(n: usize) -> Vec<T> {
         .collect()
 }
 
+fn parse_bits() -> usize {
+    let mut s = String::new();
+    stdin().read_line(&mut s).ok();
+    usize::from_str_radix(s.trim(), 2).ok().unwrap()
+}
+
 fn print_lines<T: std::string::ToString>(lines: Vec<T>) {
     println!(
         "{}",
