@@ -20,4 +20,4 @@ macro_rules! impl_parity {
     }
 }
 
-impl_parity!(isize);
+impl_parity!(u32, i32);
