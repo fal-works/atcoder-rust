@@ -1,13 +1,13 @@
 use std::io::*;
 
 struct CharacterInput<'a> {
-    stdin_ref: StdinLock<'a>,
+    locked_stdin: StdinLock<'a>,
 }
 
 #[allow(dead_code)]
 impl<'a> CharacterInput<'a> {
     fn scan_u(&mut self) -> usize {
-        self.stdin_ref
+        self.locked_stdin
             .by_ref()
             .bytes()
             .map(|byte| byte.unwrap() as char)
@@ -31,7 +31,7 @@ impl<'a> CharacterInput<'a> {
     }
 
     fn scan_s(&mut self) -> String {
-        self.stdin_ref
+        self.locked_stdin
             .by_ref()
             .bytes()
             .map(|byte| byte.unwrap() as char)
@@ -42,7 +42,7 @@ impl<'a> CharacterInput<'a> {
 }
 
 fn create_cin<'a>(input: StdinLock<'a>) -> CharacterInput {
-    CharacterInput { stdin_ref: input }
+    CharacterInput { locked_stdin: input }
 }
 
 struct CharacterOutput {
