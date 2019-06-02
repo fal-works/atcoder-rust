@@ -100,8 +100,8 @@ impl CharacterOutput {
     ) where
         I: Iterator<Item = T>,
     {
-        for point in iterator.by_ref().take(length - 1) {
-            self.add(point, separator);
+        for element in iterator.by_ref().take(length - 1) {
+            self.add(element, separator);
         }
         self.add(iterator.next().unwrap(), delimiter);
     }
@@ -121,18 +121,25 @@ fn create_cout(capacity: usize) -> CharacterOutput {
 }
 
 // easy
-fn println(s: &str) {
-    let stdout = stdout();
-    let mut locked_stdout = stdout.lock();
-    locked_stdout.write_all(s.as_bytes()).unwrap();
-    locked_stdout.write_all(b"\n").unwrap();
-    locked_stdout.flush().unwrap();
+fn println<T: std::string::ToString>(s: T) {
+    println!("{}", s.to_string());
 }
 
-// ------------------------------------------------------------------------
-
-fn process(cin: &mut CharacterInput, cout: &mut CharacterOutput) {
-    
+fn print_from_iterator<T: ToString, I>(
+    iterator: &mut I,
+    length: usize,
+    separator: &str,
+    buffer_capacity: usize
+) where
+    I: Iterator<Item = T>,
+{
+    println!(
+        "{}",
+        iterator
+            .map(|e| e.to_string())
+            .collect::<Vec<String>>()
+            .join(separator),
+    );
 }
 
 // ------------------------------------------------------------------------
@@ -142,7 +149,10 @@ fn main() {
     let cin = &mut create_cin(cin.lock(), 64);
     let cout = &mut create_cout(0);
 
-    process(cin, cout);
+    let n = cin.scan_u(LF) as usize;
+    let a = cin.scan_u_vec(n, SP, LF);
+
+
 
     cout.flush();
 }

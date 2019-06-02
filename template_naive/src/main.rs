@@ -57,14 +57,20 @@ fn println<T: std::string::ToString>(s: T) {
     println!("{}", s.to_string());
 }
 
-fn print_lines<T: std::string::ToString>(lines: Vec<T>) {
+fn print_from_iterator<T: ToString, I>(
+    iterator: &mut I,
+    length: usize,
+    separator: &str,
+    buffer_capacity: usize
+) where
+    I: Iterator<Item = T>,
+{
     println!(
         "{}",
-        lines
-            .iter()
+        iterator
             .map(|e| e.to_string())
             .collect::<Vec<String>>()
-            .join("\n"),
+            .join(separator),
     );
 }
 
