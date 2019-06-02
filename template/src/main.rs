@@ -77,18 +77,33 @@ impl CharacterOutput {
         self.string_buffer += s;
     }
 
-    fn add_s(&mut self, s: &str, separator: &str) {
+    fn add_s(&mut self, s: &str, separator: char) {
         self.push_s(s);
-        self.push_s(separator);
+        self.string_buffer.push(separator);
     }
 
     fn push<T: ToString>(&mut self, n: T) {
         self.push_s(&n.to_string());
     }
 
-    fn add<T: ToString>(&mut self, n: T, separator: &str) {
+    fn add<T: ToString>(&mut self, n: T, separator: char) {
         self.push(n);
-        self.push_s(separator);
+        self.string_buffer.push(separator);
+    }
+
+    fn add_from_iterator<T: ToString, I>(
+        &mut self,
+        iterator: &mut I,
+        length: usize,
+        separator: char,
+        delimiter: char,
+    ) where
+        I: Iterator<Item = T>,
+    {
+        for point in iterator.by_ref().take(length - 1) {
+            self.add(point, separator);
+        }
+        self.add(iterator.next().unwrap(), delimiter);
     }
 
     fn flush(&mut self) {
