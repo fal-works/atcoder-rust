@@ -53,6 +53,10 @@ fn parse_bits() -> usize {
     usize::from_str_radix(s.trim(), 2).ok().unwrap()
 }
 
+fn println<T: std::string::ToString>(s: T) {
+    println!("{}", s.to_string());
+}
+
 fn print_lines<T: std::string::ToString>(lines: Vec<T>) {
     println!(
         "{}",
@@ -60,10 +64,14 @@ fn print_lines<T: std::string::ToString>(lines: Vec<T>) {
             .iter()
             .map(|e| e.to_string())
             .collect::<Vec<String>>()
-            .join("\n")
+            .join("\n"),
     );
 }
 
 // ------------------------------------------------------------------------
 
-fn main() {}
+fn main() {
+    let n = parse_line::<usize>();
+
+    println(n);
+}
