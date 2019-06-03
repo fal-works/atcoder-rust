@@ -53,6 +53,17 @@ fn parse_bits() -> usize {
     usize::from_str_radix(s.trim(), 2).ok().unwrap()
 }
 
+fn read_bytes(length: usize, skip_next: bool) -> Vec<u8> {
+    let mut bytes = vec![0; length];
+    let stdin = stdin();
+    let mut stdin = stdin.lock();
+    stdin.read_exact(&mut bytes).unwrap();
+    if skip_next {
+        stdin.bytes().next();
+    }
+    bytes
+}
+
 fn println<T: std::string::ToString>(s: T) {
     println!("{}", s.to_string());
 }
