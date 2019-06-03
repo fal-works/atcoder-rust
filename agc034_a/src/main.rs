@@ -14,52 +14,82 @@ fn parse_line_vec<T: FromStr>() -> Vec<T> {
         .collect()
 }
 
+fn read_bytes(length: usize, skip_next: bool) -> Vec<u8> {
+    let mut bytes = vec![0; length];
+    let stdin = stdin();
+    let mut stdin = stdin.lock();
+    stdin.read_exact(&mut bytes).unwrap();
+    if skip_next {
+        stdin.bytes().next();
+    }
+    bytes
+}
+
 fn println<T: std::string::ToString>(s: T) {
     println!("{}", s.to_string());
 }
 
 // ------------------------------------------------------------------------
 
+#[derive(Copy, Clone)]
+struct ConsecutiveBytes {
+    unit_byte: u8,
+    count: usize,
+}
+
+impl ConsecutiveBytes {
+    fn new(unit_byte: u8) -> ConsecutiveBytes {
+        ConsecutiveBytes {
+            unit_byte: unit_byte,
+            count: 0,
+        }
+    }
+
+    fn count(&mut self, byte: u8) -> usize {
+        if byte == self.unit_byte {
+            self.count += 1;
+        } else {
+            self.count = 0;
+        }
+
+        self.count
+    }
+}
+
+// ------------------------------------------------------------------------
+
 fn main() {
-    let input = parse_line_vec::<usize>();
-    let n = input[0];
-    let a = input[1] - 1; // zero-origin
-    let b = input[2] - 1;
-    let c = input[3] - 1;
-    let d = input[4] - 1;
+    let header = parse_line_vec::<usize>();
+    let n = header[0];
+    let a = header[1] - 1; // zero-origin
+    let b = header[2] - 1;
+    let c = header[3] - 1;
+    let d = header[4] - 1;
+    let s = read_bytes(n, false);
 
-    let mut s = Vec::with_capacity(n + 1);
-    let stdin = stdin();
-    stdin.lock().read_until(b'\n', &mut s).unwrap();
+    let mut rocks = ConsecutiveBytes::new(b'#');
 
-    const SPACE: u8 = b'.';
-    const ROCK: u8 = b'#';
-
-    let need_overtake = c > d;
-    let mut can_overtake = false;
-
-    let mut before_last = s[a];
-    let mut before = s[a + 1];
-
-    let last_overtake_index = std::cmp::min(c, d) + 1;
-
-    for index in a + 2..std::cmp::max(c, d) {
-        let current = s[index];
-
-        if current == ROCK && before == ROCK {
+    for index in a..std::cmp::max(c, d) {
+        if rocks.count(s[index]) >= 2 {
             println("No");
             return;
         }
-
-        if index > b && index <= last_overtake_index && current == SPACE && before == SPACE && before_last == SPACE {
-            can_overtake = true;
-        }
-
-        before_last = before;
-        before = current;
     }
 
-    let ok = !need_overtake || can_overtake;
+    if c < d {
+        // does not need to overtake
+        println("Yes");
+        return;
+    }
 
-    println(if ok { "Yes" } else { "No" });
+    let mut spaces = ConsecutiveBytes::new(b'.');
+
+    for index in b - 1..std::cmp::min(d + 2, n) {
+        if spaces.count(s[index]) >= 3 {
+            println("Yes");
+            return;
+        }
+    }
+
+    println("No");
 }
