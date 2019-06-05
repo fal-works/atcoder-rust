@@ -1,7 +1,8 @@
 @echo off
 setlocal
 
-:: Call this BAT from each project folder and pass the current directory path
+:: Pass the EXE file name (excluding the file extension) when calling this BAT file.
+
 set NAME=%~n1
 
 for %%F in (stdin\*.txt) do (
