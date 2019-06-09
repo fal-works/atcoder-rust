@@ -64,7 +64,7 @@ fn read_bytes(length: usize, skip_next: bool) -> Vec<u8> {
     bytes
 }
 
-fn println<T: std::string::ToString>(s: T) {
+fn println<T: ToString>(s: T) {
     println!("{}", s.to_string());
 }
 
