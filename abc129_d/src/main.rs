@@ -153,7 +153,7 @@ fn main() {
     let h = cin.scan_u(SP) as usize;
     let w = cin.scan_u(LF) as usize;
 
-    let mut grid = cin.scan_grid(w, h, 0 as i32, &[(b'#', -1)]);
+    let mut grid = cin.scan_grid(w, h, 0 as i16, &[(b'#', -1)]);
 
     for y in 0..h {
         let row = &mut grid[y];
@@ -167,7 +167,7 @@ fn main() {
                 let count = next_x - x;
 
                 for x in x..next_x {
-                    row[x] = count as i32;
+                    row[x] = count as i16;
                 }
                 x = next_x + 1;
             } else {
@@ -189,9 +189,8 @@ fn main() {
                 let count = next_y - y;
 
                 for y in y..next_y {
-                    let mut row = &mut grid[y];
-                    row[x] += count as i32;
-                    if row[x] > max_count { max_count = row[x]; }
+                    let count_sum = grid[y][x] + count as i16;
+                    if count_sum > max_count { max_count = count_sum; }
                 }
 
                 y = next_y + 1;
