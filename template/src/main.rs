@@ -56,6 +56,10 @@ impl<'a> CharacterInput<'a> {
     fn scan_s(&mut self, delimiter: u8) -> &str {
         unsafe { std::str::from_utf8_unchecked(self.read(delimiter)) }
     }
+
+    fn scan_i(&mut self, delimiter: u8) -> i32 {
+        self.scan_s(delimiter).parse().unwrap()
+    }
 }
 
 fn create_cin<'a>(input: StdinLock<'a>, buffer_capacity: usize) -> CharacterInput {
