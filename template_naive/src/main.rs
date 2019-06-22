@@ -26,6 +26,17 @@ fn parse_triple<T: FromStr, U: FromStr, V: FromStr>() -> (T, U, V) {
     )
 }
 
+fn parse_quadraple<T: FromStr, U: FromStr, V: FromStr, W: FromStr>() -> (T, U, V, W) {
+    let line = parse_line::<String>();
+    let mut iter = line.split_whitespace();
+    (
+        iter.next().unwrap().parse().ok().unwrap(),
+        iter.next().unwrap().parse().ok().unwrap(),
+        iter.next().unwrap().parse().ok().unwrap(),
+        iter.next().unwrap().parse().ok().unwrap(),
+    )
+}
+
 fn parse_line_vec<T: FromStr>() -> Vec<T> {
     let line = parse_line::<String>();
     line.split_whitespace()
