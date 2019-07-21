@@ -12,16 +12,23 @@ impl<'a> CharacterInput<'a> {
     fn read(&mut self, delimiter: u8) -> &[u8] {
         self.bytes_buffer.clear();
 
-        let mut len = self
+        let len = self
             .locked_stdin
             .read_until(delimiter, &mut self.bytes_buffer)
             .unwrap();
 
-        if len > 0 {
-            len -= 1;
-        }
+        let end_index = match self.bytes_buffer.last() {
+            Some(byte) => {
+                if *byte == delimiter {
+                    len - 1
+                } else {
+                    len
+                }
+            }
+            None => len,
+        };
 
-        &self.bytes_buffer[0..len]
+        &self.bytes_buffer[0..end_index]
     }
 
     fn scan_u(&mut self, delimiter: u8) -> u32 {
