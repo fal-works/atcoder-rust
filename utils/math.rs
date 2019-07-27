@@ -14,3 +14,7 @@ fn gcd(a: u32, b: u32) -> u32 {
 fn lcm(a: u32, b: u32) -> u32 {
     a * b / gcd(a, b)
 }
+
+fn average(a: u32, b: u32) -> u32 {
+    (a + b) >> 1
+}

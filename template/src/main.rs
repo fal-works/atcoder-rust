@@ -160,7 +160,7 @@ fn main() {
     let n = cin.scan_u(LF) as usize;
     let a = cin.scan_u_vec(n, SP, LF);
 
-
+    
 
     cout.flush();
 }

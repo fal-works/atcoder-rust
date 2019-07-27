@@ -101,5 +101,7 @@ fn print_from_iterator<T: ToString, I>(
 fn main() {
     let n = parse_line::<usize>();
 
+    
+
     println(n);
 }
