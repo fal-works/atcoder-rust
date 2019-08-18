@@ -20,37 +20,36 @@ fn depth_first_search<T, F>(
     nodes: &mut Vec<T>,
     n: usize,
     start_index: usize,
-    visit_callback: &mut F,
+    visit_callback: &mut F, // (node_index, previous_node_index) => true_if_found
 ) -> Option<usize>
 where
     T: GraphNode,
-    F: FnMut(&mut T) -> bool,
+    F: FnMut(usize, Option<usize>) -> bool,
 {
     let mut node_visited_indicator_table = vec![false; n];
 
-    let mut frontier_index_stack: Vec<usize> = Vec::with_capacity(n / 2);
-    frontier_index_stack.push(start_index);
+    let mut frontier_index_queue: Vec<(usize, Option<usize>)> = Vec::with_capacity(n / 2);
+    frontier_index_queue.push((start_index, None));
 
     loop {
-        let node_index = frontier_index_stack.pop();
+        let next = frontier_index_queue.pop();
 
-        match node_index {
-            Some(current) => {
-                let mut node = &mut nodes[current];
-                if visit_callback(node) {
-                    return Some(current);
+        match next {
+            Some((node_index, parent_node_index)) => {
+                if visit_callback(node_index, parent_node_index) {
+                    return Some(node_index);
                 }
 
-                for neighbor in node
+                for neighbor in nodes[node_index]
                     .get_adjacent_node_indices()
                     .iter()
                     .map(|rf| *rf)
                     .filter(|neighbor| node_visited_indicator_table[*neighbor] == false)
                 {
-                    frontier_index_stack.push(neighbor); // for_each() is not supported by v1.15.1
+                    frontier_index_queue.push((neighbor, Some(node_index))); // for_each() is not supported by v1.15.1
                 }
 
-                node_visited_indicator_table[current] = true;
+                node_visited_indicator_table[node_index] = true;
             }
             None => break,
         }
@@ -59,10 +58,71 @@ where
     None
 }
 
-// ------------------------------------------------------------------------
+use std::collections::VecDeque;
 
-struct NodeSample {
+fn breadth_first_search<T, F>(
+    nodes: &mut Vec<T>,
+    n: usize,
+    start_index: usize,
+    visit_callback: &mut F, // (node_index, previous_node_index) => true_if_found
+) -> Option<usize>
+where
+    T: GraphNode,
+    F: FnMut(usize, Option<usize>) -> bool,
+{
+    let mut node_visited_indicator_table = vec![false; n];
+
+    let mut frontier_index_queue: VecDeque<(usize, Option<usize>)> = VecDeque::with_capacity(n / 2);
+    frontier_index_queue.push_back((start_index, None));
+
+    loop {
+        let next = frontier_index_queue.pop_front();
+
+        match next {
+            Some((node_index, parent_node_index)) => {
+                if visit_callback(node_index, parent_node_index) {
+                    return Some(node_index);
+                }
+
+                for neighbor in nodes[node_index]
+                    .get_adjacent_node_indices()
+                    .iter()
+                    .map(|rf| *rf)
+                    .filter(|neighbor| node_visited_indicator_table[*neighbor] == false)
+                {
+                    frontier_index_queue.push_back((neighbor, Some(node_index))); // for_each() is not supported by v1.15.1
+                }
+
+                node_visited_indicator_table[node_index] = true;
+            }
+            None => break,
+        }
+    }
+
+    None
+}
+
+// Sample
+struct Node {
     adjacent_node_indices: Vec<usize>,
+}
+
+impl Node {
+    fn new_list(length: usize) -> Vec<Node> {
+        (0..length)
+            .map(|_| Node {
+                adjacent_node_indices: Vec::new(),
+            })
+            .collect()
+    }
+
+    fn new_list_with_capacity(length: usize, capacity: usize) -> Vec<Node> {
+        (0..length)
+            .map(|_| Node {
+                adjacent_node_indices: Vec::with_capacity(capacity),
+            })
+            .collect()
+    }
 }
 
 impl GraphNode for Node {
