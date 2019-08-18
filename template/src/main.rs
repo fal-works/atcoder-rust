@@ -64,6 +64,14 @@ impl<'a> CharacterInput<'a> {
         unsafe { std::str::from_utf8_unchecked(self.read(delimiter)) }
     }
 
+    fn scan_chars(&mut self, delimiter: u8) -> Vec<char> {
+        self.scan_s(delimiter).chars().collect()
+    }
+
+    fn scan_string(&mut self, delimiter: u8) -> String {
+        self.scan_s(delimiter).into()
+    }
+
     fn scan_i(&mut self, delimiter: u8) -> i32 {
         self.scan_s(delimiter).parse().unwrap()
     }
